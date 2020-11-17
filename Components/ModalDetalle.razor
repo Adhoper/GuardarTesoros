@@ -1,0 +1,112 @@
+﻿@using System.Drawing
+@using Data
+@using Microsoft.JSInterop
+@inject IJSRuntime runtime
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+
+<style>
+
+    #vista-mapa, .map {
+        height: 95%;
+        width: 95%;
+        position: absolute !important;
+    }
+
+    .map-Container {
+        min-width: 450px;
+        width: 100%;
+        min-height: 380px;
+        height: 100%;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+    }
+</style>
+
+<div class="modal fade" id="@(Id)" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <!--h5 class="modal-title" id="exampleModalLabel">@Title</h5-->
+                <div class="d-flex justify-content-between">
+                    <button @onclick="viewDetails" class="btn btn-link">Detalles</button>
+                    <button @onclick="viewMaps" class="btn btn-link">Mapa</button>
+                    <button @onclick="viewImages" class="btn btn-link">Imagen de Referencia</button>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!---------------------------------->
+                <div>
+                    @if (details)
+                    {
+                        <div>
+                            <p><b>Nombre: </b>@ts.Nombre</p>
+                            <p><b>Fecha: </b>@ts.Fecha.Day / @ts.Fecha.Month / @ts.Fecha.Year</p>
+                            <p><b>Peso (lb): </b>@ts.Peso lb</p>
+                            <p><b>Valor: </b>@ts.Valor</p>
+                            <p><b>Lugar: </b>@ts.Lugar</p>
+                            <p><b>Descripción</b><br>@ts.Descripcion</p>
+                        </div>
+                    }
+                    @if (maps)
+                    {
+                        <div class="map-Container">
+                            <SingleMap TiD="@ts.Id" />
+                        </div>
+                    }
+                    @if (images)
+                    {
+                        <div class="text-center">
+                            <img width="450px" src="@ts.UrlRef" alt="imagen">
+                        </div>
+                    }
+                </div>
+            </div>
+            <!----------------------------------------------------->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    [Parameter]
+    public Treasure ts { get; set; }
+
+    private string Title;
+
+    private bool details = true;
+    private bool maps = false;
+    private bool images = false;
+
+    private void viewDetails()
+    {
+        details = true;
+        maps = false;
+        images = false;
+    }
+    private void viewMaps()
+    {
+        details = false;
+        maps = true;
+        images = false;
+    }
+    private void viewImages()
+    {
+        details = false;
+        maps = false;
+        images = true;
+    }
+
+
+
+}

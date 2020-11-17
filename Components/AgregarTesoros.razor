@@ -1,0 +1,81 @@
+﻿@using tarea6y7.Data
+@using tarea6y7.Services
+
+@inject ITesoroService TS
+
+<div class="mr-2">
+
+
+    <form @onsubmit="HandleSubmit">
+        <label for="nombre">Nombre</label>
+        <input @bind-value="tesoro.Nombre" required type="text" name="nombre" id="nombre" class="form-control">
+        <label for="fecha">Fecha</label>
+        <input @bind-value="tesoro.Fecha" required type="date" name="fecha" id="fecha" class="form-control">
+        <label for="peso">Peso (Libras)</label>
+        <input @bind-value="tesoro.Peso" required type="number" name="peso" id="peso" class="form-control">
+        <label for="valor">Valor</label>
+        <input @bind-value="tesoro.Valor" required type="number" name="valor" id="valor" class="form-control">
+        <label for="lugar">Lugar</label>
+        <input @bind-value="tesoro.Lugar" required type="text" name="lugar" id="lugar" class="form-control">
+        <label for="lon">Longitud</label>
+        <input @bind-value="coord.Longitud" required type="number" step="any" name="lon" id="lon" class="form-control">
+        <label for="lat">Latitud</label>
+        <input @bind-value="coord.Latitud" required type="number" step="any" name="lat" id="lat" class="form-control">
+        <label for="iref">Imagen de Referencia</label>
+        <input @bind-value="tesoro.UrlRef" type="text" name="iref" id="iref" class="form-control">
+        <label for="descricion">Descripción</label>
+        <textarea @bind="tesoro.Descripcion" required name="descripcion" id="descripcion" cols="30" rows="4" class="form-control"></textarea>
+        <br>
+        <input type="submit" value="Agregar" class="btn btn-success">
+    </form>
+
+</div>
+
+@code {
+
+    [Parameter]
+    public Guid Uid {get; set;}
+    private Treasure tesoro = new Treasure
+    {
+        Id = Guid.NewGuid(),
+        Fecha = DateTime.Today
+    };
+    private Coordinate coord = new Coordinate
+    {
+        Id = Guid.NewGuid()
+    };
+
+    private async Task HandleSubmit()
+    {
+        Console.WriteLine("Se Inicio El Guardado");
+        tesoro.Coordenadas = coord;
+        var status = await TS.SetTreasure(tesoro);
+        if(status){
+            tesoro = new Treasure
+            {
+                Id = Guid.NewGuid(),
+                Fecha = DateTime.Today
+            };
+            coord = new Coordinate
+            {
+                Id = Guid.NewGuid()
+            };
+            StateHasChanged();
+        }
+        Console.WriteLine(status)
+;        Console.WriteLine("Finalizo El Guardado");
+
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender){
+            if(Uid != null){
+                coord.Tid = tesoro.Id;
+                coord.Uid = Uid;
+                tesoro.Uid = Uid;
+            }
+        }
+    }
+
+}

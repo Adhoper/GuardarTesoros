@@ -1,0 +1,37 @@
+﻿@page "/Mapa"
+@using Microsoft.AspNetCore.Identity
+@using tarea6y7.Data
+@using tarea6y7.Components
+@inject UserManager<AppUser> UserManager
+
+<AuthorizeView>
+    <Authorized>
+        <Mapa TID="@userId"></Mapa>
+    </Authorized>
+    <NotAuthorized>
+        <p class="h2">
+            Aqui Guardamos Tus Secretos, inicia Sesión para que empiezes a coleccionar tesoros
+        </p>
+
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+
+    [CascadingParameter]
+
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private string userId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await authenticationStateTask;
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            AppUser user = await UserManager.GetUserAsync(authState.User);
+            userId = user.Uid.ToString();
+        }
+    }
+
+}

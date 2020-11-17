@@ -1,0 +1,15 @@
+﻿@page "/"
+@using tarea6y7.Components
+
+
+<AuthorizeView>
+    <Authorized>
+        <Principal/>
+    </Authorized>
+    <NotAuthorized>
+        <p class="h2">
+            Aqui Guardamos Tus Secretos, inicia Sesión para que empiezes a coleccionar tesoros
+        </p>
+    </NotAuthorized>
+</AuthorizeView>
+

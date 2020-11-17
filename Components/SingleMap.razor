@@ -1,0 +1,23 @@
+﻿@inject IJSRuntime runtime
+@using System.Text.Json
+@using tarea6y7.Services
+@inject ITesoroService TS
+@using tarea6y7.Data
+
+<div class="map" id="vista-mapa"></div>
+
+@code
+{
+    [Parameter]
+    public Guid TiD { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Coordinate c = await TS.GetCoordinate(TiD);
+            string json = $"[{JsonSerializer.Serialize(c)}]";
+            await runtime.InvokeVoidAsync("initMap", json, 15);
+        }
+    }
+}
